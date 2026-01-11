@@ -1,245 +1,230 @@
-# Design System
+# Modern CSS Design System
 
-A modern, vanilla CSS design system foundation. No build step. No dependencies.
+A cutting-edge CSS design system using the latest CSS features. No build step. No preprocessor.
 
 ## Features
 
-- **CSS Grid** - 12-column grid with responsive breakpoints
-- **Container Queries** - Component-level responsive design
-- **CSS Layers** - Predictable cascade with `@layer`
-- **Custom Properties** - Full design token system
-- **Dark Mode** - Automatic `prefers-color-scheme` support + manual toggle
-- **Accessibility** - Screen reader utilities, skip links, focus states
-- **Logical Properties** - RTL-ready with `margin-inline`, `padding-block`, etc.
+| Feature | Usage |
+|---------|-------|
+| **CSS Nesting** | Native `&` selector throughout |
+| **@property** | Typed, animatable custom properties |
+| **light-dark()** | Single declaration theming |
+| **@layer** | Predictable cascade control |
+| **Container Queries** | Component-level responsive |
+| **Style Queries** | Variants via custom properties |
+| **:has()** | Parent selectors, form validation |
+| **Scroll Animations** | `animation-timeline: view()` |
+| **@starting-style** | Entry animations |
+| **Anchor Positioning** | Tooltips without JS |
+| **Popover API** | Native modals and dropdowns |
+| **View Transitions** | Page transition support |
+| **interpolate-size** | Animate to `auto` |
 
 ## Installation
-
-Copy the `css/` directory to your project:
-
-```
-css/
-├── index.css      # Entry point (import this)
-├── tokens.css     # Design tokens
-├── base.css       # Reset & defaults
-├── grid.css       # Grid system
-└── utilities.css  # Utility classes
-```
-
-Link in your HTML:
 
 ```html
 <link rel="stylesheet" href="./css/index.css">
 ```
 
-## Usage
-
-### Grid
-
-12-column grid using CSS Grid:
+## Quick Start
 
 ```html
-<div class="row">
-  <div class="col-4">1/3</div>
-  <div class="col-4">1/3</div>
-  <div class="col-4">1/3</div>
-</div>
-```
-
-### Responsive
-
-Mobile-first breakpoints: `sm` (640px), `md` (768px), `lg` (1024px), `xl` (1280px), `2xl` (1536px)
-
-```html
-<div class="col-12 sm:col-6 lg:col-3">
-  Full width → Half → Quarter
-</div>
-```
-
-### Container Queries
-
-Component-level responsive design:
-
-```html
-<div class="cq-container">
+<div class="container">
   <div class="row">
-    <div class="col-12 @sm:col-6 @md:col-4">
-      Responds to container width
+    <div class="col-12 md:col-6 lg:col-4">
+      <div class="bg-surface border rounded-lg p-4 shadow animate-in">
+        Content
+      </div>
     </div>
   </div>
 </div>
 ```
 
-Container breakpoints: `@xs` (320px), `@sm` (480px), `@md` (640px), `@lg` (800px)
+## Grid
 
-### Column Positioning
+12-column responsive grid:
 
 ```html
-<!-- Offset -->
-<div class="col-6 col-start-4">Centered</div>
+<!-- Basic -->
+<div class="row">
+  <div class="col-6">Half</div>
+  <div class="col-6">Half</div>
+</div>
 
-<!-- Explicit start/end -->
-<div class="col-start-2 col-end-8">Columns 2-7</div>
+<!-- Responsive -->
+<div class="col-12 sm:col-6 lg:col-3">
+  Full → Half → Quarter
+</div>
+
+<!-- Container queries -->
+<div class="cq">
+  <div class="col-12 @sm:col-6 @md:col-4">
+    Responds to container
+  </div>
+</div>
 ```
 
-### Dark Mode
+## Theming
 
-Automatic via `prefers-color-scheme`, or manual:
+Uses `light-dark()` for automatic theme switching:
 
-```html
+```css
+/* Automatic via prefers-color-scheme */
+:root { color-scheme: light dark; }
+
+/* Manual override */
 <html data-theme="dark">
 ```
 
-```html
-<html data-theme="light">
-```
-
-## Design Tokens
-
-All values are CSS custom properties. Override in your own CSS:
+Change primary color by adjusting hue:
 
 ```css
-:root {
-  --color-primary: oklch(55% 0.2 280);
-  --grid-gap: 2rem;
-  --font-sans: "Inter", system-ui, sans-serif;
-}
+:root { --hue-primary: 250; }  /* Blue */
+:root { --hue-primary: 330; }  /* Pink */
+:root { --hue-primary: 145; }  /* Green */
 ```
 
-### Spacing Scale
+## Scroll Animations
 
-```
---space-1:  0.25rem (4px)
---space-2:  0.5rem  (8px)
---space-3:  0.75rem (12px)
---space-4:  1rem    (16px)
---space-6:  1.5rem  (24px)
---space-8:  2rem    (32px)
---space-12: 3rem    (48px)
---space-16: 4rem    (64px)
+Animate elements on scroll without JavaScript:
+
+```html
+<div class="scroll-fade">Fades in</div>
+<div class="scroll-scale">Scales in</div>
+<div class="scroll-slide-left">Slides from left</div>
+<div class="scroll-slide-right">Slides from right</div>
 ```
 
-### Typography Scale
+Scroll progress bar:
 
-```
---text-xs:  0.75rem
---text-sm:  0.875rem
---text-base: 1rem
---text-lg:  1.125rem
---text-xl:  1.25rem
---text-2xl: 1.5rem
---text-3xl: 1.875rem
---text-4xl: 2.25rem
+```html
+<div class="scroll-progress"></div>
 ```
 
-### Colors
+## Entry Animations
 
-Semantic color tokens that adapt to light/dark mode:
+Elements animate when they mount:
 
-```
---color-bg
---color-surface
---color-text
---color-text-muted
---color-primary
---color-error
---color-success
---color-warning
+```html
+<div class="animate-in">Fades up</div>
+<div class="animate-scale-in">Scales in</div>
+<div class="animate-slide-up">Slides up</div>
 ```
 
-## Utilities Reference
+## :has() Utilities
 
-### Layout
+CSS-only form validation:
 
-| Class | Description |
-|-------|-------------|
-| `.container` | Centered max-width container |
-| `.row` | Grid container (12 columns) |
-| `.col-{1-12}` | Column span |
-| `.col-start-{1-13}` | Column start position |
-| `.col-full` | Full width (all 12 columns) |
+```html
+<div class="form-group">
+  <label>Email</label>
+  <input type="email" required>
+  <!-- Auto-shows * for required, colors for valid/invalid -->
+</div>
+```
 
-### Flexbox
+Auto-grid based on children count:
 
-| Class | Description |
-|-------|-------------|
-| `.flex` | `display: flex` |
-| `.flex-col` | Column direction |
-| `.items-center` | Align items center |
-| `.justify-between` | Space between |
-| `.gap-{0-16}` | Gap using spacing scale |
-| `.grow` / `.shrink-0` | Flex grow/shrink |
+```html
+<div class="auto-cols">
+  <div>1</div>
+  <div>2</div>
+  <!-- Automatically creates 2-column grid -->
+</div>
+```
+
+## Popovers & Dialogs
+
+Native popover with animated entry:
+
+```html
+<button popovertarget="menu">Open</button>
+<div id="menu" popover>
+  Content here
+</div>
+```
+
+## Anchor Positioning
+
+Position elements relative to anchors:
+
+```html
+<button class="anchor" style="anchor-name: --btn;">Click</button>
+<div class="anchored-top" style="position-anchor: --btn;">
+  Tooltip
+</div>
+```
+
+## Utilities
 
 ### Spacing
 
-| Class | Description |
-|-------|-------------|
-| `.p-{0-16}` | Padding (all sides) |
-| `.px-{0-12}` | Padding inline |
-| `.py-{0-12}` | Padding block |
-| `.m-{0-8}` | Margin (all sides) |
-| `.mx-auto` | Center horizontally |
-| `.my-{0-8}` | Margin block |
+```
+.p-{0-16}     Padding
+.px-{0-8}    Padding inline
+.py-{0-16}    Padding block
+.m-{0-8}      Margin
+.gap-{0-16}   Gap
+```
 
 ### Typography
 
-| Class | Description |
-|-------|-------------|
-| `.text-{xs-6xl}` | Font size |
-| `.font-{normal,medium,semibold,bold}` | Font weight |
-| `.text-{left,center,right}` | Alignment |
-| `.truncate` | Ellipsis overflow |
+```
+.text-{xs-6xl}  Font size
+.font-{thin-black}  Weight
+.text-{left,center,right}
+.truncate  Ellipsis
+.line-clamp-{2,3,4}
+```
 
 ### Colors
 
-| Class | Description |
-|-------|-------------|
-| `.text-{default,muted,subtle}` | Text colors |
-| `.text-{primary,error,success}` | Semantic text |
-| `.bg-{default,surface,muted}` | Backgrounds |
-| `.bg-{primary,error,success}` | Semantic backgrounds |
+```
+.text-{default,muted,subtle,primary,error,success}
+.bg-{default,surface,muted,primary,error,success}
+.bg-{primary,success,warning,error}-subtle
+```
 
-### Borders
+### Layout
 
-| Class | Description |
-|-------|-------------|
-| `.border` | 1px border |
-| `.border-{t,b,s,e}` | Single side |
-| `.rounded` | Default radius |
-| `.rounded-{sm,md,lg,xl,full}` | Radius sizes |
+```
+.flex .flex-col .flex-wrap
+.items-{start,center,end}
+.justify-{start,center,between}
+.grow .shrink-0
+```
 
-### Effects
+## Animation Timing
 
-| Class | Description |
-|-------|-------------|
-| `.shadow-{sm,md,lg,xl}` | Box shadows |
-| `.opacity-{0-100}` | Opacity |
-| `.transition` | Smooth transitions |
-
-### Accessibility
-
-| Class | Description |
-|-------|-------------|
-| `.sr-only` | Screen reader only |
-| `.skip-link` | Skip navigation link |
+```css
+--ease-linear
+--ease-in
+--ease-out
+--ease-in-out
+--ease-bounce
+--ease-elastic
+--spring  /* Spring physics via linear() */
+```
 
 ## Browser Support
 
-- Chrome/Edge 105+
-- Firefox 121+
-- Safari 16.4+
+| Browser | Version |
+|---------|---------|
+| Chrome | 125+ |
+| Edge | 125+ |
+| Firefox | 128+ |
+| Safari | 17.4+ |
 
-Requires support for: CSS Grid, Container Queries, CSS Layers, `oklch()`.
+## File Structure
 
-## Architecture
-
-CSS is organized in layers for predictable cascade:
-
-1. `tokens` - Custom properties
-2. `base` - Reset and defaults
-3. `layout` - Grid system
-4. `utilities` - Utility classes
-
-Later layers override earlier ones. Utilities always win.
+```
+css/
+├── index.css      # Entry point with @layer order
+├── tokens.css     # @property, colors, spacing
+├── base.css       # Reset with nesting
+├── grid.css       # Grid + container queries
+└── utilities.css  # All utilities
+```
 
 ## License
 

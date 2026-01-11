@@ -3,282 +3,344 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Design System - Grid & Utilities</title>
+  <title>Modern CSS Design System</title>
   <link rel="stylesheet" href="./css/index.css">
 </head>
 <body class="bg-default">
-  <a href="#main" class="skip-link">Skip to main content</a>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <!-- Scroll Progress Bar -->
+  <div class="fixed top-0 start-0 w-full h-1 bg-primary z-max scroll-progress" style="transform-origin: left;"></div>
 
   <!-- Header -->
-  <header class="bg-surface border-b py-4">
+  <header class="sticky top-0 z-sticky bg-surface border-b py-4 animate-in">
     <div class="container">
       <div class="flex items-center justify-between">
-        <div class="font-semibold text-lg">Design System</div>
+        <div class="font-bold text-xl">Design System</div>
         <nav class="flex gap-6">
-          <a href="#grid" class="text-muted transition-colors cursor-pointer">Grid</a>
-          <a href="#utilities" class="text-muted transition-colors cursor-pointer">Utilities</a>
-          <a href="#patterns" class="text-muted transition-colors cursor-pointer">Patterns</a>
+          <a href="#grid" class="text-muted transition">Grid</a>
+          <a href="#animations" class="text-muted transition">Animations</a>
+          <a href="#components" class="text-muted transition">Components</a>
+          <button popovertarget="theme-menu" class="text-muted transition cursor-pointer">Theme</button>
         </nav>
       </div>
     </div>
   </header>
 
-  <main id="main" class="py-12">
-    <div class="container">
+  <!-- Theme Popover -->
+  <div id="theme-menu" popover>
+    <div class="flex flex-col gap-2">
+      <button onclick="document.documentElement.removeAttribute('data-theme')" class="p-2 rounded transition text-left">System</button>
+      <button onclick="document.documentElement.setAttribute('data-theme', 'light')" class="p-2 rounded transition text-left">Light</button>
+      <button onclick="document.documentElement.setAttribute('data-theme', 'dark')" class="p-2 rounded transition text-left">Dark</button>
+    </div>
+  </div>
 
-      <!-- Hero -->
-      <section class="mb-16">
-        <h1 class="text-4xl font-bold mb-4">Modern CSS Design System</h1>
-        <p class="text-xl text-muted max-w-prose">
-          A production-ready foundation using CSS Grid, custom properties, container queries, and utility classes. No build step required.
+  <main id="main">
+    <!-- Hero -->
+    <section class="py-16 mb-16">
+      <div class="container">
+        <h1 class="text-5xl font-bold mb-6 animate-in text-balance">Modern CSS Design System</h1>
+        <p class="text-xl text-muted max-w-prose mb-8 animate-in" style="--delay: 100ms;">
+          Built with cutting-edge CSS: native nesting, <code class="bg-muted px-2 py-1 rounded text-sm">@property</code>,
+          <code class="bg-muted px-2 py-1 rounded text-sm">light-dark()</code>, scroll-driven animations,
+          <code class="bg-muted px-2 py-1 rounded text-sm">:has()</code>, anchor positioning, and more.
         </p>
-      </section>
+        <div class="flex gap-4 animate-in">
+          <button popovertarget="features-dialog" class="bg-primary text-inverted px-6 py-3 rounded-lg font-medium transition shadow-md">
+            View Features
+          </button>
+          <a href="#grid" class="border px-6 py-3 rounded-lg font-medium transition">
+            Get Started
+          </a>
+        </div>
+      </div>
+    </section>
 
-      <!-- Grid Demo -->
-      <section id="grid" class="mb-16">
-        <h2 class="text-2xl font-semibold mb-6 pb-2 border-b">12-Column Grid</h2>
+    <!-- Features Dialog -->
+    <dialog id="features-dialog" popover>
+      <h2 class="text-2xl font-bold mb-4">Features</h2>
+      <ul class="flex flex-col gap-2 text-muted">
+        <li>@property for animatable custom properties</li>
+        <li>light-dark() for automatic theming</li>
+        <li>Native CSS nesting</li>
+        <li>Scroll-driven animations</li>
+        <li>@starting-style entry animations</li>
+        <li>:has() parent selectors</li>
+        <li>Anchor positioning</li>
+        <li>Container queries & style queries</li>
+        <li>View transitions</li>
+        <li>Popover API</li>
+      </ul>
+      <button popovertarget="features-dialog" popovertargetaction="hide" class="mt-6 bg-muted px-4 py-2 rounded">Close</button>
+    </dialog>
 
-        <div class="mb-8">
-          <h3 class="font-medium text-muted mb-3">Basic columns</h3>
+    <!-- Grid Section -->
+    <section id="grid" class="py-16 mb-8">
+      <div class="container">
+        <h2 class="text-3xl font-bold mb-8 scroll-fade">12-Column Grid</h2>
+
+        <div class="mb-12 scroll-fade">
+          <h3 class="font-semibold text-muted mb-4">Basic grid</h3>
           <div class="row">
-            <div class="col-4"><div class="bg-primary text-inverted p-3 rounded text-center text-sm">col-4</div></div>
-            <div class="col-4"><div class="bg-primary text-inverted p-3 rounded text-center text-sm">col-4</div></div>
-            <div class="col-4"><div class="bg-primary text-inverted p-3 rounded text-center text-sm">col-4</div></div>
+            <div class="col-4"><div class="bg-primary text-inverted p-4 rounded text-center">col-4</div></div>
+            <div class="col-4"><div class="bg-primary text-inverted p-4 rounded text-center">col-4</div></div>
+            <div class="col-4"><div class="bg-primary text-inverted p-4 rounded text-center">col-4</div></div>
           </div>
         </div>
 
-        <div class="mb-8">
-          <h3 class="font-medium text-muted mb-3">Sidebar layout</h3>
+        <div class="mb-12 scroll-fade">
+          <h3 class="font-semibold text-muted mb-4">Responsive <span class="text-subtle">(resize window)</span></h3>
           <div class="row">
-            <div class="col-3"><div class="bg-muted p-3 rounded text-center text-sm">Sidebar</div></div>
-            <div class="col-9"><div class="bg-surface border p-3 rounded text-center text-sm">Main content</div></div>
+            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-4 rounded text-center animate-in">1</div></div>
+            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-4 rounded text-center animate-in">2</div></div>
+            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-4 rounded text-center animate-in">3</div></div>
+            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-4 rounded text-center animate-in">4</div></div>
           </div>
         </div>
 
-        <div class="mb-8">
-          <h3 class="font-medium text-muted mb-3">Responsive grid <span class="text-subtle">(resize window)</span></h3>
+        <div class="mb-12 scroll-fade">
+          <h3 class="font-semibold text-muted mb-4">Container queries</h3>
           <div class="row">
-            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-3 rounded text-center text-sm">1</div></div>
-            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-3 rounded text-center text-sm">2</div></div>
-            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-3 rounded text-center text-sm">3</div></div>
-            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-3 rounded text-center text-sm">4</div></div>
-          </div>
-        </div>
-
-        <div class="mb-8">
-          <h3 class="font-medium text-muted mb-3">Column positioning</h3>
-          <div class="row">
-            <div class="col-6 col-start-4"><div class="bg-warning p-3 rounded text-center text-sm">col-6 col-start-4 (centered)</div></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Container Queries -->
-      <section id="cq" class="mb-16">
-        <h2 class="text-2xl font-semibold mb-6 pb-2 border-b">Container Queries</h2>
-        <p class="text-muted mb-6">Components respond to their container width, not the viewport.</p>
-
-        <div class="row">
-          <div class="col-12 lg:col-4">
-            <div class="cq-container bg-surface border rounded p-4">
-              <div class="row gap-2">
-                <div class="col-12 @sm:col-6"><div class="bg-muted p-2 rounded text-sm text-center">A</div></div>
-                <div class="col-12 @sm:col-6"><div class="bg-muted p-2 rounded text-sm text-center">B</div></div>
+            <div class="col-12 lg:col-4">
+              <div class="cq bg-surface border rounded p-4">
+                <div class="row gap-2">
+                  <div class="col-12 @sm:col-6"><div class="bg-muted p-3 rounded text-center text-sm">Responds to</div></div>
+                  <div class="col-12 @sm:col-6"><div class="bg-muted p-3 rounded text-center text-sm">container</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 lg:col-8">
+              <div class="cq bg-surface border rounded p-4">
+                <div class="row gap-2">
+                  <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-3 rounded text-center text-sm">A</div></div>
+                  <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-3 rounded text-center text-sm">B</div></div>
+                  <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-3 rounded text-center text-sm">C</div></div>
+                  <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-3 rounded text-center text-sm">D</div></div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-12 lg:col-8">
-            <div class="cq-container bg-surface border rounded p-4">
-              <div class="row gap-2">
-                <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-2 rounded text-sm text-center">A</div></div>
-                <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-2 rounded text-sm text-center">B</div></div>
-                <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-2 rounded text-sm text-center">C</div></div>
-                <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-2 rounded text-sm text-center">D</div></div>
-              </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scroll Animations -->
+    <section id="animations" class="py-16 bg-subtle">
+      <div class="container">
+        <h2 class="text-3xl font-bold mb-8 scroll-fade">Scroll Animations</h2>
+
+        <div class="row mb-12">
+          <div class="col-12 md:col-6 lg:col-3 scroll-fade">
+            <div class="bg-surface border rounded-lg p-6 h-full">
+              <div class="text-4xl font-bold text-primary mb-2">01</div>
+              <h3 class="font-semibold mb-2">Fade In</h3>
+              <p class="text-sm text-muted">Elements fade in as they enter the viewport.</p>
+            </div>
+          </div>
+          <div class="col-12 md:col-6 lg:col-3 scroll-scale">
+            <div class="bg-surface border rounded-lg p-6 h-full">
+              <div class="text-4xl font-bold text-primary mb-2">02</div>
+              <h3 class="font-semibold mb-2">Scale In</h3>
+              <p class="text-sm text-muted">Elements scale up as they appear.</p>
+            </div>
+          </div>
+          <div class="col-12 md:col-6 lg:col-3 scroll-slide-left">
+            <div class="bg-surface border rounded-lg p-6 h-full">
+              <div class="text-4xl font-bold text-primary mb-2">03</div>
+              <h3 class="font-semibold mb-2">Slide Left</h3>
+              <p class="text-sm text-muted">Slide in from the left side.</p>
+            </div>
+          </div>
+          <div class="col-12 md:col-6 lg:col-3 scroll-slide-right">
+            <div class="bg-surface border rounded-lg p-6 h-full">
+              <div class="text-4xl font-bold text-primary mb-2">04</div>
+              <h3 class="font-semibold mb-2">Slide Right</h3>
+              <p class="text-sm text-muted">Slide in from the right side.</p>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Patterns -->
-      <section id="patterns" class="mb-16">
-        <h2 class="text-2xl font-semibold mb-6 pb-2 border-b">Common Patterns</h2>
+    <!-- :has() Form Demo -->
+    <section class="py-16">
+      <div class="container">
+        <h2 class="text-3xl font-bold mb-8 scroll-fade">:has() Form Validation</h2>
+        <p class="text-muted mb-8 scroll-fade">Form fields auto-validate using CSS <code class="bg-muted px-2 py-1 rounded text-sm">:has()</code> - no JavaScript needed.</p>
+
+        <form class="bg-surface border rounded-xl p-8 max-w-prose scroll-fade" onsubmit="return false;">
+          <div class="form-group mb-6">
+            <label class="block font-medium mb-2">Email</label>
+            <input type="email" required placeholder="you@example.com"
+                   class="w-full border rounded-lg px-4 py-3 bg-default transition">
+          </div>
+          <div class="form-group mb-6">
+            <label class="block font-medium mb-2">Password</label>
+            <input type="password" required minlength="8" placeholder="Min 8 characters"
+                   class="w-full border rounded-lg px-4 py-3 bg-default transition">
+          </div>
+          <div class="form-group mb-6">
+            <label class="block font-medium mb-2">Message</label>
+            <textarea required placeholder="Your message..."
+                      class="w-full border rounded-lg px-4 py-3 bg-default transition"></textarea>
+          </div>
+          <button type="submit" class="bg-primary text-inverted px-6 py-3 rounded-lg font-medium transition">
+            Submit
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Components -->
+    <section id="components" class="py-16 bg-subtle">
+      <div class="container">
+        <h2 class="text-3xl font-bold mb-8 scroll-fade">Components</h2>
+
+        <!-- Anchor Positioning Demo -->
+        <div class="mb-16 scroll-fade">
+          <h3 class="font-semibold text-muted mb-4">Anchor Positioning</h3>
+          <div class="relative h-32 bg-surface border rounded-lg flex items-center justify-center">
+            <button class="anchor bg-primary text-inverted px-4 py-2 rounded" style="anchor-name: --demo-anchor;">
+              Hover me
+            </button>
+            <div class="anchored-top bg-surface border rounded shadow-lg p-2 text-sm pointer-events-none opacity-0 transition"
+                 style="position-anchor: --demo-anchor;">
+              Tooltip above
+            </div>
+          </div>
+        </div>
 
         <!-- Card Grid -->
-        <div class="mb-12">
-          <h3 class="font-medium text-muted mb-4">Card grid</h3>
+        <div class="mb-16">
+          <h3 class="font-semibold text-muted mb-4 scroll-fade">Card Grid</h3>
           <div class="row">
-            <div class="col-12 sm:col-6 lg:col-4">
-              <article class="bg-surface border rounded-lg overflow-hidden shadow-sm transition-shadow">
+            <div class="col-12 sm:col-6 lg:col-4 scroll-fade">
+              <article class="bg-surface border rounded-xl overflow-hidden shadow transition animate-scale-in">
                 <div class="aspect-video bg-muted"></div>
-                <div class="p-4">
+                <div class="p-6">
                   <h4 class="font-semibold mb-2">Card Title</h4>
-                  <p class="text-sm text-muted">Brief description of the card content goes here.</p>
+                  <p class="text-sm text-muted line-clamp-2">Description with automatic line clamping using modern CSS.</p>
                 </div>
               </article>
             </div>
-            <div class="col-12 sm:col-6 lg:col-4">
-              <article class="bg-surface border rounded-lg overflow-hidden shadow-sm">
+            <div class="col-12 sm:col-6 lg:col-4 scroll-fade">
+              <article class="bg-surface border rounded-xl overflow-hidden shadow transition animate-scale-in">
                 <div class="aspect-video bg-muted"></div>
-                <div class="p-4">
+                <div class="p-6">
                   <h4 class="font-semibold mb-2">Card Title</h4>
-                  <p class="text-sm text-muted">Brief description of the card content goes here.</p>
+                  <p class="text-sm text-muted line-clamp-2">Another card with the same styling.</p>
                 </div>
               </article>
             </div>
-            <div class="col-12 sm:col-6 lg:col-4">
-              <article class="bg-surface border rounded-lg overflow-hidden shadow-sm">
+            <div class="col-12 sm:col-6 lg:col-4 scroll-fade">
+              <article class="bg-surface border rounded-xl overflow-hidden shadow transition animate-scale-in">
                 <div class="aspect-video bg-muted"></div>
-                <div class="p-4">
+                <div class="p-6">
                   <h4 class="font-semibold mb-2">Card Title</h4>
-                  <p class="text-sm text-muted">Brief description of the card content goes here.</p>
+                  <p class="text-sm text-muted line-clamp-2">Third card completing the row.</p>
                 </div>
               </article>
             </div>
           </div>
         </div>
 
-        <!-- Form Layout -->
-        <div class="mb-12">
-          <h3 class="font-medium text-muted mb-4">Form layout</h3>
-          <form class="bg-surface border rounded-lg p-6 max-w-prose">
-            <div class="row gap-4 mb-4">
-              <div class="col-12 sm:col-6">
-                <label class="block text-sm font-medium mb-1">First name</label>
-                <input type="text" class="w-full border rounded px-3 py-2 bg-default" placeholder="John">
-              </div>
-              <div class="col-12 sm:col-6">
-                <label class="block text-sm font-medium mb-1">Last name</label>
-                <input type="text" class="w-full border rounded px-3 py-2 bg-default" placeholder="Doe">
-              </div>
-            </div>
-            <div class="mb-4">
-              <label class="block text-sm font-medium mb-1">Email</label>
-              <input type="email" class="w-full border rounded px-3 py-2 bg-default" placeholder="john@example.com">
-            </div>
-            <div class="mb-6">
-              <label class="block text-sm font-medium mb-1">Message</label>
-              <textarea class="w-full border rounded px-3 py-2 bg-default min-h-0" rows="4" placeholder="Your message..."></textarea>
-            </div>
-            <button type="submit" class="bg-primary text-inverted px-4 py-2 rounded font-medium transition-colors">
-              Submit
-            </button>
-          </form>
-        </div>
-
-        <!-- Stats -->
-        <div class="mb-12">
-          <h3 class="font-medium text-muted mb-4">Stats section</h3>
-          <div class="row gap-4">
-            <div class="col-6 sm:col-3">
-              <div class="bg-surface border rounded-lg p-4 text-center">
-                <div class="text-3xl font-bold text-primary">99%</div>
-                <div class="text-sm text-muted">Uptime</div>
-              </div>
-            </div>
-            <div class="col-6 sm:col-3">
-              <div class="bg-surface border rounded-lg p-4 text-center">
-                <div class="text-3xl font-bold text-primary">24/7</div>
-                <div class="text-sm text-muted">Support</div>
-              </div>
-            </div>
-            <div class="col-6 sm:col-3">
-              <div class="bg-surface border rounded-lg p-4 text-center">
-                <div class="text-3xl font-bold text-primary">10k+</div>
-                <div class="text-sm text-muted">Users</div>
-              </div>
-            </div>
-            <div class="col-6 sm:col-3">
-              <div class="bg-surface border rounded-lg p-4 text-center">
-                <div class="text-3xl font-bold text-primary">50+</div>
-                <div class="text-sm text-muted">Countries</div>
-              </div>
-            </div>
+        <!-- Auto Columns with :has() -->
+        <div class="mb-16 scroll-fade">
+          <h3 class="font-semibold text-muted mb-4">Auto Columns with :has()</h3>
+          <p class="text-sm text-muted mb-4">Grid auto-adjusts based on children count:</p>
+          <div class="auto-cols mb-4">
+            <div class="bg-primary text-inverted p-4 rounded text-center">1</div>
+            <div class="bg-primary text-inverted p-4 rounded text-center">2</div>
+          </div>
+          <div class="auto-cols mb-4">
+            <div class="bg-success text-inverted p-4 rounded text-center">1</div>
+            <div class="bg-success text-inverted p-4 rounded text-center">2</div>
+            <div class="bg-success text-inverted p-4 rounded text-center">3</div>
+          </div>
+          <div class="auto-cols">
+            <div class="bg-warning p-4 rounded text-center">1</div>
+            <div class="bg-warning p-4 rounded text-center">2</div>
+            <div class="bg-warning p-4 rounded text-center">3</div>
+            <div class="bg-warning p-4 rounded text-center">4</div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Media Object -->
-        <div class="mb-12">
-          <h3 class="font-medium text-muted mb-4">Media object</h3>
-          <div class="flex gap-4 bg-surface border rounded-lg p-4">
-            <div class="shrink-0">
-              <div class="w-fit h-fit bg-muted rounded-full p-6"></div>
+    <!-- Color System -->
+    <section class="py-16">
+      <div class="container">
+        <h2 class="text-3xl font-bold mb-8 scroll-fade">Dynamic Colors</h2>
+        <p class="text-muted mb-8 scroll-fade">Change the primary hue with a single CSS variable:</p>
+
+        <div class="flex gap-4 mb-8 scroll-fade">
+          <button onclick="document.documentElement.style.setProperty('--hue-primary', '250')"
+                  class="w-12 h-12 rounded-full bg-primary transition" style="--hue-primary: 250;"></button>
+          <button onclick="document.documentElement.style.setProperty('--hue-primary', '330')"
+                  class="w-12 h-12 rounded-full transition" style="background: oklch(50% 0.15 330);"></button>
+          <button onclick="document.documentElement.style.setProperty('--hue-primary', '145')"
+                  class="w-12 h-12 rounded-full transition" style="background: oklch(50% 0.15 145);"></button>
+          <button onclick="document.documentElement.style.setProperty('--hue-primary', '30')"
+                  class="w-12 h-12 rounded-full transition" style="background: oklch(50% 0.15 30);"></button>
+        </div>
+
+        <div class="row scroll-fade">
+          <div class="col-6 sm:col-3">
+            <div class="bg-primary-subtle border border-primary rounded-lg p-4 text-center">
+              <div class="text-3xl font-bold text-primary">Aa</div>
+              <div class="text-sm text-muted">Primary</div>
             </div>
-            <div class="grow min-w-0">
-              <h4 class="font-semibold">Media Heading</h4>
-              <p class="text-sm text-muted">This is a classic media object pattern using flexbox utilities. The avatar stays fixed while the content grows.</p>
+          </div>
+          <div class="col-6 sm:col-3">
+            <div class="bg-success-subtle border rounded-lg p-4 text-center" style="border-color: var(--color-success);">
+              <div class="text-3xl font-bold text-success">Aa</div>
+              <div class="text-sm text-muted">Success</div>
+            </div>
+          </div>
+          <div class="col-6 sm:col-3">
+            <div class="bg-warning-subtle border rounded-lg p-4 text-center" style="border-color: var(--color-warning);">
+              <div class="text-3xl font-bold text-warning">Aa</div>
+              <div class="text-sm text-muted">Warning</div>
+            </div>
+          </div>
+          <div class="col-6 sm:col-3">
+            <div class="bg-error-subtle border rounded-lg p-4 text-center" style="border-color: var(--color-error);">
+              <div class="text-3xl font-bold text-error">Aa</div>
+              <div class="text-sm text-muted">Error</div>
             </div>
           </div>
         </div>
-      </section>
-
-      <!-- Utilities Demo -->
-      <section id="utilities" class="mb-16">
-        <h2 class="text-2xl font-semibold mb-6 pb-2 border-b">Utilities</h2>
-
-        <div class="row gap-8">
-          <div class="col-12 md:col-6">
-            <h3 class="font-medium text-muted mb-3">Typography</h3>
-            <div class="bg-surface border rounded-lg p-4">
-              <p class="text-xs mb-2">text-xs</p>
-              <p class="text-sm mb-2">text-sm</p>
-              <p class="text-base mb-2">text-base</p>
-              <p class="text-lg mb-2">text-lg</p>
-              <p class="text-xl mb-2">text-xl</p>
-              <p class="text-2xl">text-2xl</p>
-            </div>
-          </div>
-
-          <div class="col-12 md:col-6">
-            <h3 class="font-medium text-muted mb-3">Colors</h3>
-            <div class="bg-surface border rounded-lg p-4">
-              <div class="flex gap-2 mb-2">
-                <div class="w-fit h-fit p-4 bg-primary rounded"></div>
-                <div class="w-fit h-fit p-4 bg-success rounded"></div>
-                <div class="w-fit h-fit p-4 bg-warning rounded"></div>
-                <div class="w-fit h-fit p-4 bg-error rounded"></div>
-              </div>
-              <p class="text-default">text-default</p>
-              <p class="text-muted">text-muted</p>
-              <p class="text-subtle">text-subtle</p>
-              <p class="text-primary">text-primary</p>
-            </div>
-          </div>
-
-          <div class="col-12 md:col-6">
-            <h3 class="font-medium text-muted mb-3">Shadows</h3>
-            <div class="flex flex-wrap gap-4 p-4">
-              <div class="bg-surface p-4 rounded shadow-sm">sm</div>
-              <div class="bg-surface p-4 rounded shadow">default</div>
-              <div class="bg-surface p-4 rounded shadow-md">md</div>
-              <div class="bg-surface p-4 rounded shadow-lg">lg</div>
-              <div class="bg-surface p-4 rounded shadow-xl">xl</div>
-            </div>
-          </div>
-
-          <div class="col-12 md:col-6">
-            <h3 class="font-medium text-muted mb-3">Borders & Radius</h3>
-            <div class="flex flex-wrap gap-4 p-4 bg-surface border rounded-lg">
-              <div class="bg-muted p-4 rounded-none">none</div>
-              <div class="bg-muted p-4 rounded-sm">sm</div>
-              <div class="bg-muted p-4 rounded">default</div>
-              <div class="bg-muted p-4 rounded-lg">lg</div>
-              <div class="bg-muted p-4 rounded-full">full</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-    </div>
+      </div>
+    </section>
   </main>
 
   <!-- Footer -->
-  <footer class="bg-surface border-t py-8">
-    <div class="container">
-      <p class="text-sm text-muted text-center">
-        Built with vanilla CSS. No build step. No dependencies.
+  <footer class="bg-surface border-t py-12">
+    <div class="container text-center">
+      <p class="text-muted">
+        Built with vanilla CSS. No build step. No JavaScript framework.
+      </p>
+      <p class="text-sm text-subtle mt-2">
+        Requires Chrome 125+, Firefox 128+, Safari 17.4+
       </p>
     </div>
   </footer>
+
+  <style>
+    /* Demo-specific hover states */
+    .anchor:hover + .anchored-top {
+      opacity: 1;
+    }
+
+    nav a:hover,
+    nav button:hover {
+      color: var(--color-text);
+    }
+
+    button:hover:not(:disabled) {
+      filter: brightness(1.1);
+    }
+  </style>
 </body>
 </html>

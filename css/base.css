@@ -1,28 +1,22 @@
 /* ==========================================================================
    Base Styles
-   Reset, normalization, and sensible defaults
+   Modern reset with native nesting
    ========================================================================== */
 
 @layer base {
-  /* -------------------------------------------------------------------------
-     Box Sizing Reset
-     ------------------------------------------------------------------------- */
+  /* Universal box-sizing */
   *,
   *::before,
   *::after {
     box-sizing: border-box;
   }
 
-  /* -------------------------------------------------------------------------
-     Reset Margins
-     ------------------------------------------------------------------------- */
+  /* Reset margins */
   * {
     margin: 0;
   }
 
-  /* -------------------------------------------------------------------------
-     Root & Body
-     ------------------------------------------------------------------------- */
+  /* Root & Body */
   html {
     -webkit-text-size-adjust: 100%;
     tab-size: 4;
@@ -30,18 +24,24 @@
     line-height: var(--leading-normal);
     color: var(--color-text);
     background-color: var(--color-bg);
+    scroll-behavior: smooth;
+    hanging-punctuation: first last;
+
+    /* Enable view transitions */
+    view-transition-name: var(--vt-root);
+
+    @media (prefers-reduced-motion: reduce) {
+      scroll-behavior: auto;
+    }
   }
 
   body {
-    min-height: 100vh;
     min-height: 100dvh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* -------------------------------------------------------------------------
-     Typography Defaults
-     ------------------------------------------------------------------------- */
+  /* Typography with modern text-wrap */
   h1, h2, h3, h4, h5, h6 {
     text-wrap: balance;
     overflow-wrap: break-word;
@@ -52,9 +52,46 @@
     overflow-wrap: break-word;
   }
 
-  /* -------------------------------------------------------------------------
-     Media Elements
-     ------------------------------------------------------------------------- */
+  /* Links with nesting */
+  a {
+    color: inherit;
+    text-decoration: inherit;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+  }
+
+  /* Buttons */
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  /* Form elements with field-sizing */
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  textarea {
+    field-sizing: content;
+    min-height: 3lh;
+  }
+
+  /* Media elements */
   img,
   picture,
   video,
@@ -65,88 +102,43 @@
     height: auto;
   }
 
-  /* -------------------------------------------------------------------------
-     Form Elements
-     ------------------------------------------------------------------------- */
-  input,
-  button,
-  textarea,
-  select {
-    font: inherit;
-    color: inherit;
-  }
-
-  button {
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-
-  /* -------------------------------------------------------------------------
-     Links
-     ------------------------------------------------------------------------- */
-  a {
-    color: inherit;
-    text-decoration: inherit;
-  }
-
-  /* -------------------------------------------------------------------------
-     Tables
-     ------------------------------------------------------------------------- */
+  /* Tables */
   table {
     border-collapse: collapse;
     border-spacing: 0;
   }
 
-  /* -------------------------------------------------------------------------
-     Lists
-     ------------------------------------------------------------------------- */
+  /* Lists */
   ul,
   ol {
     list-style: none;
     padding: 0;
   }
 
-  /* -------------------------------------------------------------------------
-     Focus Styles
-     ------------------------------------------------------------------------- */
+  /* Focus styles */
   :focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 
-  /* -------------------------------------------------------------------------
-     Selection
-     ------------------------------------------------------------------------- */
+  /* Selection */
   ::selection {
-    background-color: var(--color-primary);
-    color: var(--color-primary-text);
+    background-color: color-mix(in oklch, var(--color-primary) 30%, transparent);
+    color: inherit;
   }
 
-  /* -------------------------------------------------------------------------
-     Scrollbar (Webkit)
-     ------------------------------------------------------------------------- */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  /* Target highlight for anchor links */
+  :target {
+    scroll-margin-block-start: 2rem;
   }
 
-  ::-webkit-scrollbar-track {
-    background: transparent;
+  /* Dialog & Popover backdrop */
+  ::backdrop {
+    background: oklch(0% 0 0 / 50%);
+    backdrop-filter: blur(4px);
   }
 
-  ::-webkit-scrollbar-thumb {
-    background: var(--color-border-strong);
-    border-radius: var(--radius-full);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-text-subtle);
-  }
-
-  /* -------------------------------------------------------------------------
-     Reduced Motion
-     ------------------------------------------------------------------------- */
+  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -154,13 +146,10 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
     }
   }
 
-  /* -------------------------------------------------------------------------
-     Print Styles
-     ------------------------------------------------------------------------- */
+  /* Print */
   @media print {
     body {
       background: white;
