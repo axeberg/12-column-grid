@@ -1,65 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="./styles.css" type="text/css" />
-    <title>Grids!</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design System - Grid & Utilities</title>
+  <link rel="stylesheet" href="./css/index.css">
 </head>
-<body>
-    <main>
-        <section  class="row">
-            <article class="column column-4"></article>
-            <article class="column column-4"></article>
-            <article class="column column-4"></article>
-        </section>
+<body class="bg-default">
+  <a href="#main" class="skip-link">Skip to main content</a>
 
-        <section  class="row">
-            <article class="column column-2"></article>
-            <article class="column column-4"></article>
-            <article class="column column-4"></article>
-            <article class="column column-2"></article>
-        </section>
+  <!-- Header -->
+  <header class="bg-surface border-b py-4">
+    <div class="container">
+      <div class="flex items-center justify-between">
+        <div class="font-semibold text-lg">Design System</div>
+        <nav class="flex gap-6">
+          <a href="#grid" class="text-muted transition-colors cursor-pointer">Grid</a>
+          <a href="#utilities" class="text-muted transition-colors cursor-pointer">Utilities</a>
+          <a href="#patterns" class="text-muted transition-colors cursor-pointer">Patterns</a>
+        </nav>
+      </div>
+    </div>
+  </header>
 
-        <!-- Let's go crazy -->
-        <div class="row">
-            <div class="column column-6">
-                <div class="row">
-                    <div class="column column-6"></div>
-                    <div class="column column-6"></div>
-                </div>
-                <div class="row">
-                    <div class="column column-3"></div>
-                    <div class="column column-3"></div>
-                    <div class="column column-3"></div>
-                    <div class="column column-3"></div>
-                </div>
-                <div class="row">
-                    <div class="column column-4"></div>
-                    <div class="column column-4"></div>
-                    <div class="column column-4"></div>
-                </div>
-            </div>
-            <div class="column column-6">
-                <div class="row">
-                    <div class="column column-7"></div>
-                    <div class="column column-3"></div>
-                    <div class="column column-2"></div>
-                </div>
-                <div class="row">
-                    <div class="column column-2"></div>
-                    <div class="column column-2"></div>
-                    <div class="column column-4"></div>
-                    <div class="column column-2"></div>
-                    <div class="column column-2"></div>
-                </div>
-                <div class="row">
-                    <div class="column column-9"></div>
-                    <div class="column column-3"></div>
-                </div>
-            </div>
+  <main id="main" class="py-12">
+    <div class="container">
+
+      <!-- Hero -->
+      <section class="mb-16">
+        <h1 class="text-4xl font-bold mb-4">Modern CSS Design System</h1>
+        <p class="text-xl text-muted max-w-prose">
+          A production-ready foundation using CSS Grid, custom properties, container queries, and utility classes. No build step required.
+        </p>
+      </section>
+
+      <!-- Grid Demo -->
+      <section id="grid" class="mb-16">
+        <h2 class="text-2xl font-semibold mb-6 pb-2 border-b">12-Column Grid</h2>
+
+        <div class="mb-8">
+          <h3 class="font-medium text-muted mb-3">Basic columns</h3>
+          <div class="row">
+            <div class="col-4"><div class="bg-primary text-inverted p-3 rounded text-center text-sm">col-4</div></div>
+            <div class="col-4"><div class="bg-primary text-inverted p-3 rounded text-center text-sm">col-4</div></div>
+            <div class="col-4"><div class="bg-primary text-inverted p-3 rounded text-center text-sm">col-4</div></div>
+          </div>
         </div>
-    </main>
+
+        <div class="mb-8">
+          <h3 class="font-medium text-muted mb-3">Sidebar layout</h3>
+          <div class="row">
+            <div class="col-3"><div class="bg-muted p-3 rounded text-center text-sm">Sidebar</div></div>
+            <div class="col-9"><div class="bg-surface border p-3 rounded text-center text-sm">Main content</div></div>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="font-medium text-muted mb-3">Responsive grid <span class="text-subtle">(resize window)</span></h3>
+          <div class="row">
+            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-3 rounded text-center text-sm">1</div></div>
+            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-3 rounded text-center text-sm">2</div></div>
+            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-3 rounded text-center text-sm">3</div></div>
+            <div class="col-12 sm:col-6 lg:col-3"><div class="bg-success text-inverted p-3 rounded text-center text-sm">4</div></div>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="font-medium text-muted mb-3">Column positioning</h3>
+          <div class="row">
+            <div class="col-6 col-start-4"><div class="bg-warning p-3 rounded text-center text-sm">col-6 col-start-4 (centered)</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Container Queries -->
+      <section id="cq" class="mb-16">
+        <h2 class="text-2xl font-semibold mb-6 pb-2 border-b">Container Queries</h2>
+        <p class="text-muted mb-6">Components respond to their container width, not the viewport.</p>
+
+        <div class="row">
+          <div class="col-12 lg:col-4">
+            <div class="cq-container bg-surface border rounded p-4">
+              <div class="row gap-2">
+                <div class="col-12 @sm:col-6"><div class="bg-muted p-2 rounded text-sm text-center">A</div></div>
+                <div class="col-12 @sm:col-6"><div class="bg-muted p-2 rounded text-sm text-center">B</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 lg:col-8">
+            <div class="cq-container bg-surface border rounded p-4">
+              <div class="row gap-2">
+                <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-2 rounded text-sm text-center">A</div></div>
+                <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-2 rounded text-sm text-center">B</div></div>
+                <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-2 rounded text-sm text-center">C</div></div>
+                <div class="col-12 @sm:col-6 @md:col-3"><div class="bg-muted p-2 rounded text-sm text-center">D</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Patterns -->
+      <section id="patterns" class="mb-16">
+        <h2 class="text-2xl font-semibold mb-6 pb-2 border-b">Common Patterns</h2>
+
+        <!-- Card Grid -->
+        <div class="mb-12">
+          <h3 class="font-medium text-muted mb-4">Card grid</h3>
+          <div class="row">
+            <div class="col-12 sm:col-6 lg:col-4">
+              <article class="bg-surface border rounded-lg overflow-hidden shadow-sm transition-shadow">
+                <div class="aspect-video bg-muted"></div>
+                <div class="p-4">
+                  <h4 class="font-semibold mb-2">Card Title</h4>
+                  <p class="text-sm text-muted">Brief description of the card content goes here.</p>
+                </div>
+              </article>
+            </div>
+            <div class="col-12 sm:col-6 lg:col-4">
+              <article class="bg-surface border rounded-lg overflow-hidden shadow-sm">
+                <div class="aspect-video bg-muted"></div>
+                <div class="p-4">
+                  <h4 class="font-semibold mb-2">Card Title</h4>
+                  <p class="text-sm text-muted">Brief description of the card content goes here.</p>
+                </div>
+              </article>
+            </div>
+            <div class="col-12 sm:col-6 lg:col-4">
+              <article class="bg-surface border rounded-lg overflow-hidden shadow-sm">
+                <div class="aspect-video bg-muted"></div>
+                <div class="p-4">
+                  <h4 class="font-semibold mb-2">Card Title</h4>
+                  <p class="text-sm text-muted">Brief description of the card content goes here.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Layout -->
+        <div class="mb-12">
+          <h3 class="font-medium text-muted mb-4">Form layout</h3>
+          <form class="bg-surface border rounded-lg p-6 max-w-prose">
+            <div class="row gap-4 mb-4">
+              <div class="col-12 sm:col-6">
+                <label class="block text-sm font-medium mb-1">First name</label>
+                <input type="text" class="w-full border rounded px-3 py-2 bg-default" placeholder="John">
+              </div>
+              <div class="col-12 sm:col-6">
+                <label class="block text-sm font-medium mb-1">Last name</label>
+                <input type="text" class="w-full border rounded px-3 py-2 bg-default" placeholder="Doe">
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Email</label>
+              <input type="email" class="w-full border rounded px-3 py-2 bg-default" placeholder="john@example.com">
+            </div>
+            <div class="mb-6">
+              <label class="block text-sm font-medium mb-1">Message</label>
+              <textarea class="w-full border rounded px-3 py-2 bg-default min-h-0" rows="4" placeholder="Your message..."></textarea>
+            </div>
+            <button type="submit" class="bg-primary text-inverted px-4 py-2 rounded font-medium transition-colors">
+              Submit
+            </button>
+          </form>
+        </div>
+
+        <!-- Stats -->
+        <div class="mb-12">
+          <h3 class="font-medium text-muted mb-4">Stats section</h3>
+          <div class="row gap-4">
+            <div class="col-6 sm:col-3">
+              <div class="bg-surface border rounded-lg p-4 text-center">
+                <div class="text-3xl font-bold text-primary">99%</div>
+                <div class="text-sm text-muted">Uptime</div>
+              </div>
+            </div>
+            <div class="col-6 sm:col-3">
+              <div class="bg-surface border rounded-lg p-4 text-center">
+                <div class="text-3xl font-bold text-primary">24/7</div>
+                <div class="text-sm text-muted">Support</div>
+              </div>
+            </div>
+            <div class="col-6 sm:col-3">
+              <div class="bg-surface border rounded-lg p-4 text-center">
+                <div class="text-3xl font-bold text-primary">10k+</div>
+                <div class="text-sm text-muted">Users</div>
+              </div>
+            </div>
+            <div class="col-6 sm:col-3">
+              <div class="bg-surface border rounded-lg p-4 text-center">
+                <div class="text-3xl font-bold text-primary">50+</div>
+                <div class="text-sm text-muted">Countries</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Media Object -->
+        <div class="mb-12">
+          <h3 class="font-medium text-muted mb-4">Media object</h3>
+          <div class="flex gap-4 bg-surface border rounded-lg p-4">
+            <div class="shrink-0">
+              <div class="w-fit h-fit bg-muted rounded-full p-6"></div>
+            </div>
+            <div class="grow min-w-0">
+              <h4 class="font-semibold">Media Heading</h4>
+              <p class="text-sm text-muted">This is a classic media object pattern using flexbox utilities. The avatar stays fixed while the content grows.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Utilities Demo -->
+      <section id="utilities" class="mb-16">
+        <h2 class="text-2xl font-semibold mb-6 pb-2 border-b">Utilities</h2>
+
+        <div class="row gap-8">
+          <div class="col-12 md:col-6">
+            <h3 class="font-medium text-muted mb-3">Typography</h3>
+            <div class="bg-surface border rounded-lg p-4">
+              <p class="text-xs mb-2">text-xs</p>
+              <p class="text-sm mb-2">text-sm</p>
+              <p class="text-base mb-2">text-base</p>
+              <p class="text-lg mb-2">text-lg</p>
+              <p class="text-xl mb-2">text-xl</p>
+              <p class="text-2xl">text-2xl</p>
+            </div>
+          </div>
+
+          <div class="col-12 md:col-6">
+            <h3 class="font-medium text-muted mb-3">Colors</h3>
+            <div class="bg-surface border rounded-lg p-4">
+              <div class="flex gap-2 mb-2">
+                <div class="w-fit h-fit p-4 bg-primary rounded"></div>
+                <div class="w-fit h-fit p-4 bg-success rounded"></div>
+                <div class="w-fit h-fit p-4 bg-warning rounded"></div>
+                <div class="w-fit h-fit p-4 bg-error rounded"></div>
+              </div>
+              <p class="text-default">text-default</p>
+              <p class="text-muted">text-muted</p>
+              <p class="text-subtle">text-subtle</p>
+              <p class="text-primary">text-primary</p>
+            </div>
+          </div>
+
+          <div class="col-12 md:col-6">
+            <h3 class="font-medium text-muted mb-3">Shadows</h3>
+            <div class="flex flex-wrap gap-4 p-4">
+              <div class="bg-surface p-4 rounded shadow-sm">sm</div>
+              <div class="bg-surface p-4 rounded shadow">default</div>
+              <div class="bg-surface p-4 rounded shadow-md">md</div>
+              <div class="bg-surface p-4 rounded shadow-lg">lg</div>
+              <div class="bg-surface p-4 rounded shadow-xl">xl</div>
+            </div>
+          </div>
+
+          <div class="col-12 md:col-6">
+            <h3 class="font-medium text-muted mb-3">Borders & Radius</h3>
+            <div class="flex flex-wrap gap-4 p-4 bg-surface border rounded-lg">
+              <div class="bg-muted p-4 rounded-none">none</div>
+              <div class="bg-muted p-4 rounded-sm">sm</div>
+              <div class="bg-muted p-4 rounded">default</div>
+              <div class="bg-muted p-4 rounded-lg">lg</div>
+              <div class="bg-muted p-4 rounded-full">full</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-surface border-t py-8">
+    <div class="container">
+      <p class="text-sm text-muted text-center">
+        Built with vanilla CSS. No build step. No dependencies.
+      </p>
+    </div>
+  </footer>
 </body>
 </html>

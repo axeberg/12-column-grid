@@ -1,0 +1,16 @@
+/* ==========================================================================
+   Design System Entry Point
+
+   Layer order determines cascade priority (later = higher priority):
+   1. tokens    - Design tokens and custom properties
+   2. base      - Reset and element defaults
+   3. layout    - Grid system and containers
+   4. utilities - Single-purpose utility classes
+   ========================================================================== */
+
+@layer tokens, base, layout, utilities;
+
+@import "tokens.css";
+@import "base.css";
+@import "grid.css";
+@import "utilities.css";
