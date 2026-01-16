@@ -6,60 +6,61 @@
 
 ## What
 
-This document defines how we structure a CSS design system intended for consumption by Web Components. It covers the boundary between document-level styles and shadow DOM, the role of utility classes, and token naming conventions.
+This document defines the structure of a CSS design system for Web Components using shadow DOM. It specifies:
+
+- The boundary between document-scope and shadow-scope styles
+- Token naming conventions (primitive vs. semantic)
+- Directory structure and file organization
+- The JavaScript module interface for `adoptedStyleSheets`
 
 ## Why
 
-We're building a vanilla CSS design system. No Sass, no build step, no framework. The distribution target is Web Components using shadow DOM.
+Shadow DOM encapsulation creates constraints that existing CSS frameworks don't account for:
 
-This creates constraints that traditional CSS frameworks ignore. Tailwind assumes global scope. CSS-in-JS assumes a JavaScript runtime. Neither fits.
+1. Styles in the document don't apply inside shadow roots
+2. Utility classes (`.flex`, `.p-4`) are useless inside components unless explicitly adopted
+3. CSS custom properties *do* inherit into shadow roots (per CSS spec)
+4. `@property` registrations must occur at document scope—they cannot be registered inside shadow DOM
 
-Shadow DOM changes the game. Styles don't leak in. Global utility classes are useless inside a shadow root unless explicitly adopted. But CSS custom properties *do* cascade through—that's by design, per spec.
-
-We need to make intentional decisions about:
-- What lives in the document vs. what gets adopted into shadow roots
-- Whether utilities belong inside components at all
-- How to name tokens so they're useful without being limiting
+These constraints dictate a specific architecture. This document captures it.
 
 ## Details
 
-### The Shadow Boundary
+### Constraint: The Shadow Boundary
 
-The DOM spec defines shadow DOM as an encapsulation boundary. Styles from the outer document don't apply inside a shadow root. This is the whole point.
+From the DOM spec, shadow DOM is an encapsulation boundary. Selectors from outer stylesheets don't match elements inside shadow roots.
 
-But custom properties are different. They inherit. A `--color-primary` set on `:root` is available inside every shadow root in the document. No adoption required. This was an intentional design decision by the CSS working group—custom properties are the theming API for web components.
+Exception: CSS custom properties inherit through shadow boundaries. This is intentional—the CSS Working Group designed custom properties as the theming mechanism for web components.
 
-This gives us a natural split:
+Implication:
 
-| Concern | Scope | Mechanism |
-|---------|-------|-----------|
-| Property registration (`@property`) | Document | Loaded once via `<link>` |
-| Token values | Document | Cascade via inheritance |
-| Reset/normalize | Per shadow root | `adoptedStyleSheets` |
-| Layout utilities | Per shadow root | `adoptedStyleSheets` |
-| Component styles | Per shadow root | `adoptedStyleSheets` |
+| Concern | Scope | Delivery Mechanism |
+|---------|-------|-------------------|
+| `@property` registrations | Document | `<link>` |
+| Token values (custom properties) | Document | `<link>`, cascades into shadow |
+| Reset / normalize | Shadow root | `adoptedStyleSheets` |
+| Layout utilities | Shadow root | `adoptedStyleSheets` |
+| Component-specific styles | Shadow root | `adoptedStyleSheets` |
 
-### Utility Classes: The Tradeoff
+### Decision: Utility Class Strategy
 
-There are two schools of thought here.
-
-**Option A: Adopt utilities into shadow roots**
-
-Components get access to `.flex`, `.p-4`, `.text-sm`, etc. Write markup like:
+**Option A: Utilities adopted into shadow roots**
 
 ```html
+<!-- Inside shadow DOM template -->
 <div class="flex gap-4 p-4">
   <slot></slot>
 </div>
 ```
 
-This is familiar. It's fast to write. It's also coupling your component internals to the design system's class vocabulary. If we rename `.p-4` to `.padding-4`, every component template breaks.
-
-The stylesheet has to be adopted into every shadow root. That's not expensive—`adoptedStyleSheets` shares the parsed CSSOM object—but it's still a thing you have to do. Forget it and your component renders without styles.
+Tradeoffs:
+- (+) Familiar pattern for developers used to Tailwind/utility-first
+- (+) Fast iteration—change class, see result
+- (−) Couples component templates to design system vocabulary
+- (−) Stylesheet must be adopted into every shadow root
+- (−) Renaming a utility class is a breaking change across all components
 
 **Option B: Custom properties only**
-
-Components write their own CSS using token values:
 
 ```css
 :host {
@@ -69,63 +70,60 @@ Components write their own CSS using token values:
 }
 ```
 
-More verbose. But the component owns its styles completely. The design system provides *values*, not *classes*. The contract is smaller—just the property names.
+Tradeoffs:
+- (+) Component owns its styles entirely
+- (+) No adoption required—tokens cascade automatically
+- (+) Smaller API surface (property names only)
+- (−) More verbose
+- (−) Every component writes its own CSS for common patterns
 
-No adoption needed for tokens. They just cascade.
+**Decision: Ship both**
 
-**Option C: Both, with clear boundaries**
+Tokens are the primary interface. They cascade without adoption.
 
-Tokens cascade. Always available.
+Utilities are optional. Components that benefit from them adopt the stylesheet. Components that don't, don't.
 
-Utilities exist as an adoptable sheet for components that want them. Some components adopt it. Some don't. Their choice.
+Rationale: Different components have different complexity. Forcing one approach creates friction in the other direction.
 
-This is where I land. Forcing one approach is limiting. Some components are simple enough that utilities make sense. Others have complex internal styling where classes would be noise.
+### Decision: Token Naming
 
-The key is making the utilities *optional*, not required.
+Two layers: primitives and semantics.
 
-**Recommendation:** Ship both. Document that tokens are the primary API. Utilities are a convenience layer, adopted per-component.
-
-### Token Naming: Primitive vs. Semantic
-
-This is less controversial but still worth documenting.
-
-**Primitives** are raw values:
+**Primitives** — raw values, no implied usage:
 ```css
 --ds-blue-500: oklch(55% 0.2 250);
 --ds-gray-100: oklch(95% 0 0);
 --ds-space-4: 1rem;
 ```
 
-**Semantics** map meaning to primitives:
+**Semantics** — purpose-driven aliases:
 ```css
 --ds-color-primary: var(--ds-blue-500);
 --ds-color-text: var(--ds-gray-900);
 --ds-color-text-muted: var(--ds-gray-600);
 ```
 
-You need both.
+**Rationale for both layers:**
 
-Without primitives, you can't build a one-off component that needs "a blue" that isn't the primary color. You end up hardcoding hex values, defeating the system.
+Primitives only:
+- Component authors must choose which value fits each use case
+- Different authors make different choices for the same concept
+- No single point of change when design evolves
 
-Without semantics, every component author has to decide which gray is the right gray for muted text. They'll pick differently. The UI becomes inconsistent.
+Semantics only:
+- Can't access values outside defined semantics
+- Leads to hardcoded values when the semantic doesn't exist
+- Over-proliferation of semantics to cover edge cases
 
-The pattern:
-1. Define the full primitive palette
-2. Define semantic tokens that reference primitives
-3. Components use semantics by default, primitives when they have a reason
+Both:
+- Semantics are the default reach
+- Primitives are available when semantics don't fit
+- Brand change (blue → purple) requires one line change in semantics
+- Components using primitives directly are explicitly opting out of that indirection
 
-**File structure:**
-```
-tokens/
-├── primitives.css    # Raw palette, spacing scale, type scale
-└── semantics.css     # Meaningful aliases
-```
+### Constraint: `@property` Registration
 
-Both get loaded at document level. Both cascade into shadow roots.
-
-### `@property` Registration
-
-CSS Houdini's `@property` rule lets us register typed custom properties:
+CSS Houdini's `@property` rule:
 
 ```css
 @property --ds-hue-primary {
@@ -135,81 +133,81 @@ CSS Houdini's `@property` rule lets us register typed custom properties:
 }
 ```
 
-This enables:
-- Type checking (invalid values fall back gracefully)
-- Animation (you can't animate an unregistered custom property)
-- Default values without `var()` fallbacks everywhere
+Capabilities:
+- Type validation (invalid values fall back to initial)
+- Enables animation of custom properties
+- Provides initial values without `var()` fallbacks
 
-The catch: `@property` must be registered at document scope. You can't register properties inside shadow DOM.
+Constraint: `@property` must be registered at document scope. The browser needs type information before any stylesheet references the property. Registration inside shadow DOM is not supported.
 
-This means we need a dedicated file for registrations, loaded once in the document.
+Implication: Property registrations must be in a file loaded at document level, separate from shadow-adopted styles.
 
-**File structure (revised):**
-```
-tokens/
-├── properties.css    # @property registrations only
-├── primitives.css    # Palette, scales
-└── semantics.css     # Meaningful aliases
-```
-
-### Proposed Directory Structure
+### Directory Structure
 
 ```
 design-system/
 ├── tokens/
 │   ├── properties.css     # @property registrations
-│   ├── primitives.css     # Raw values
-│   └── semantics.css      # Semantic mappings
+│   ├── primitives.css     # Raw palette, spacing scale, type scale
+│   └── semantics.css      # Purpose-driven aliases
 │
 ├── foundation/
-│   ├── reset.css          # Normalize, box-sizing, etc.
-│   └── layout.css         # Grid, container queries
+│   ├── reset.css          # Box-sizing, margin reset, etc.
+│   └── layout.css         # Grid system, container queries
 │
 ├── utilities/
-│   ├── spacing.css        # Margin, padding, gap
-│   ├── typography.css     # Font size, weight, leading
-│   ├── color.css          # Text, background, border colors
-│   ├── display.css        # Flex, grid, hidden
-│   └── index.css          # Combines all utilities (convenience)
+│   ├── spacing.css        # Margin, padding, gap utilities
+│   ├── typography.css     # Font size, weight, line-height
+│   ├── color.css          # Text color, background, border
+│   ├── display.css        # Flex, grid, visibility
+│   └── index.css          # Imports all utility files
 │
-├── document.css           # Imports tokens/* for <link> in document
+├── document.css           # Imports tokens/* (for document <link>)
 │
-└── index.js               # Exports CSSStyleSheet objects for adoption
+└── index.js               # Exports CSSStyleSheet objects
 ```
 
-Splitting utilities by concern lets components adopt only what they use. A simple icon button might only need `display.css`. A text-heavy card might grab `typography.css` and `spacing.css`. The `utilities/index.css` exists for components that want everything.
+**`tokens/`**
 
-**Document loads:**
-```html
-<link rel="stylesheet" href="design-system/document.css">
+Three files, three concerns:
+
+- `properties.css`: Schema. Defines what typed properties exist. Rarely changes. Breaking change if property removed.
+- `primitives.css`: Values. The full palette and scales. Changes when design tokens update.
+- `semantics.css`: Mappings. Connects primitives to purposes. Changes when design language evolves.
+
+Separation allows independent versioning. Adding a new primitive doesn't touch schema. Changing a semantic mapping doesn't touch primitives.
+
+**`foundation/`**
+
+Prerequisites for components. Reset ensures consistent box model. Layout provides grid primitives.
+
+Named "foundation" because nearly all components depend on these. They're adopted as a baseline, not selectively.
+
+**`utilities/`**
+
+Split by concern for selective adoption.
+
+A component needing only flexbox utilities adopts `display.css` (≈2KB). It doesn't pay for `typography.css` (≈4KB) it never uses.
+
+`index.css` exists for convenience when granularity doesn't matter.
+
+**`document.css`**
+
+Single entry point for document-level styles:
+
+```css
+@import "./tokens/properties.css";
+@import "./tokens/primitives.css";
+@import "./tokens/semantics.css";
 ```
 
-**Components adopt what they need:**
+One `<link>` tag. Tokens cascade to all shadow roots automatically.
+
+**`index.js`**
+
+Exports pre-parsed `CSSStyleSheet` objects for `adoptedStyleSheets`:
+
 ```js
-import { reset, layout, spacing, display } from 'design-system';
-import styles from './button.css' with { type: 'css' };
-
-class Button extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-    this.shadowRoot.adoptedStyleSheets = [reset, layout, spacing, display, styles];
-  }
-}
-```
-
-Or grab everything:
-```js
-import { reset, layout, utilities } from 'design-system';
-```
-
-### JavaScript Entry Point
-
-The JS module pre-parses stylesheets into shareable `CSSStyleSheet` objects:
-
-```js
-// design-system/index.js
-
 async function loadSheet(path) {
   const sheet = new CSSStyleSheet();
   const css = await fetch(new URL(path, import.meta.url)).then(r => r.text());
@@ -217,52 +215,63 @@ async function loadSheet(path) {
   return sheet;
 }
 
-// Foundation
 export const reset = await loadSheet('./foundation/reset.css');
 export const layout = await loadSheet('./foundation/layout.css');
-
-// Utilities (granular)
 export const spacing = await loadSheet('./utilities/spacing.css');
 export const typography = await loadSheet('./utilities/typography.css');
 export const color = await loadSheet('./utilities/color.css');
 export const display = await loadSheet('./utilities/display.css');
-
-// Utilities (all-in-one convenience)
 export const utilities = await loadSheet('./utilities/index.css');
 ```
 
-When CSS module scripts land everywhere:
+Top-level await ensures sheets are parsed before export. Multiple components adopting the same sheet share one `CSSStyleSheet` instance in memory.
+
+When CSS module scripts are available:
 
 ```js
-// Foundation
 export { default as reset } from './foundation/reset.css' with { type: 'css' };
 export { default as layout } from './foundation/layout.css' with { type: 'css' };
-
-// Utilities
-export { default as spacing } from './utilities/spacing.css' with { type: 'css' };
-export { default as typography } from './utilities/typography.css' with { type: 'css' };
-export { default as color } from './utilities/color.css' with { type: 'css' };
-export { default as display } from './utilities/display.css' with { type: 'css' };
-export { default as utilities } from './utilities/index.css' with { type: 'css' };
+// ...
 ```
 
-### What's Out of Scope
+### Usage
 
-- **Light DOM fallback**: Real use case, not addressing now.
-- **Server-side rendering**: Declarative shadow DOM exists but has its own constraints.
-- **Legacy browser support**: We're targeting modern browsers only.
-- **Component library**: This system provides tokens and base styles, not components.
+**Document:**
+```html
+<link rel="stylesheet" href="design-system/document.css">
+```
+
+**Component:**
+```js
+import { reset, layout, spacing } from 'design-system';
+import styles from './button.css' with { type: 'css' };
+
+class DSButton extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.adoptedStyleSheets = [reset, layout, spacing, styles];
+  }
+}
+customElements.define('ds-button', DSButton);
+```
+
+### Out of Scope
+
+- Light DOM fallback path
+- Server-side rendering / declarative shadow DOM
+- Legacy browser support
+- Component implementations (this is infrastructure only)
 
 ### Open Questions
 
-1. **Naming prefix**: `--ds-*` is generic. Should we pick something more distinctive? Or let consumers alias at their document root?
+1. **Token prefix**: `--ds-*` is placeholder. Final prefix TBD.
 
-2. **Dark mode strategy**: `light-dark()` is clean but requires `color-scheme` to be set. Document this requirement or handle it in the system?
+2. **Dark mode**: `light-dark()` requires `color-scheme` property. Should `document.css` set this, or leave to consumer?
 
 ## References
 
-- [CSS Cascading and Inheritance Level 5](https://www.w3.org/TR/css-cascade-5/) — `@layer` specification
-- [CSS Properties and Values API](https://www.w3.org/TR/css-properties-values-api-1/) — `@property` specification
-- [DOM Living Standard: Shadow DOM](https://dom.spec.whatwg.org/#shadow-trees) — encapsulation rules
-- [Constructable Stylesheets](https://web.dev/constructable-stylesheets/) — `adoptedStyleSheets` explainer
-- [Oxide Design System](https://github.com/oxidecomputer/design-system) — prior art for token structure
+- [CSS Cascading and Inheritance Level 5](https://www.w3.org/TR/css-cascade-5/)
+- [CSS Properties and Values API Level 1](https://www.w3.org/TR/css-properties-values-api-1/)
+- [DOM Standard: Shadow Trees](https://dom.spec.whatwg.org/#shadow-trees)
+- [Constructable Stylesheets](https://web.dev/constructable-stylesheets/)
