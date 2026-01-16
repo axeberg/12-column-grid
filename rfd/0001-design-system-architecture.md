@@ -161,15 +161,23 @@ design-system/
 │   ├── primitives.css     # Raw values
 │   └── semantics.css      # Semantic mappings
 │
-├── sheets/
+├── foundation/
 │   ├── reset.css          # Normalize, box-sizing, etc.
-│   ├── layout.css         # Grid, container queries
-│   └── utilities.css      # Optional utility classes
+│   └── layout.css         # Grid, container queries
+│
+├── utilities/
+│   ├── spacing.css        # Margin, padding, gap
+│   ├── typography.css     # Font size, weight, leading
+│   ├── color.css          # Text, background, border colors
+│   ├── display.css        # Flex, grid, hidden
+│   └── index.css          # Combines all utilities (convenience)
 │
 ├── document.css           # Imports tokens/* for <link> in document
 │
 └── index.js               # Exports CSSStyleSheet objects for adoption
 ```
+
+Splitting utilities by concern lets components adopt only what they use. A simple icon button might only need `display.css`. A text-heavy card might grab `typography.css` and `spacing.css`. The `utilities/index.css` exists for components that want everything.
 
 **Document loads:**
 ```html
@@ -178,17 +186,21 @@ design-system/
 
 **Components adopt what they need:**
 ```js
-import { reset, layout, utilities } from 'design-system';
+import { reset, layout, spacing, display } from 'design-system';
 import styles from './button.css' with { type: 'css' };
 
 class Button extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    // reset + layout always, utilities optional
-    this.shadowRoot.adoptedStyleSheets = [reset, layout, styles];
+    this.shadowRoot.adoptedStyleSheets = [reset, layout, spacing, display, styles];
   }
 }
+```
+
+Or grab everything:
+```js
+import { reset, layout, utilities } from 'design-system';
 ```
 
 ### JavaScript Entry Point
@@ -198,34 +210,40 @@ The JS module pre-parses stylesheets into shareable `CSSStyleSheet` objects:
 ```js
 // design-system/index.js
 
-const sheets = {
-  reset: new CSSStyleSheet(),
-  layout: new CSSStyleSheet(),
-  utilities: new CSSStyleSheet(),
-};
+async function loadSheet(path) {
+  const sheet = new CSSStyleSheet();
+  const css = await fetch(new URL(path, import.meta.url)).then(r => r.text());
+  sheet.replaceSync(css);
+  return sheet;
+}
 
-// Fetch and parse once
-await Promise.all([
-  fetch(new URL('./sheets/reset.css', import.meta.url))
-    .then(r => r.text())
-    .then(css => sheets.reset.replaceSync(css)),
-  fetch(new URL('./sheets/layout.css', import.meta.url))
-    .then(r => r.text())
-    .then(css => sheets.layout.replaceSync(css)),
-  fetch(new URL('./sheets/utilities.css', import.meta.url))
-    .then(r => r.text())
-    .then(css => sheets.utilities.replaceSync(css)),
-]);
+// Foundation
+export const reset = await loadSheet('./foundation/reset.css');
+export const layout = await loadSheet('./foundation/layout.css');
 
-export const { reset, layout, utilities } = sheets;
+// Utilities (granular)
+export const spacing = await loadSheet('./utilities/spacing.css');
+export const typography = await loadSheet('./utilities/typography.css');
+export const color = await loadSheet('./utilities/color.css');
+export const display = await loadSheet('./utilities/display.css');
+
+// Utilities (all-in-one convenience)
+export const utilities = await loadSheet('./utilities/index.css');
 ```
 
-When browsers ship CSS module scripts more broadly, this simplifies to:
+When CSS module scripts land everywhere:
 
 ```js
-export { default as reset } from './sheets/reset.css' with { type: 'css' };
-export { default as layout } from './sheets/layout.css' with { type: 'css' };
-export { default as utilities } from './sheets/utilities.css' with { type: 'css' };
+// Foundation
+export { default as reset } from './foundation/reset.css' with { type: 'css' };
+export { default as layout } from './foundation/layout.css' with { type: 'css' };
+
+// Utilities
+export { default as spacing } from './utilities/spacing.css' with { type: 'css' };
+export { default as typography } from './utilities/typography.css' with { type: 'css' };
+export { default as color } from './utilities/color.css' with { type: 'css' };
+export { default as display } from './utilities/display.css' with { type: 'css' };
+export { default as utilities } from './utilities/index.css' with { type: 'css' };
 ```
 
 ### What's Out of Scope
@@ -237,11 +255,9 @@ export { default as utilities } from './sheets/utilities.css' with { type: 'css'
 
 ### Open Questions
 
-1. **Utility granularity**: Do we ship one `utilities.css` or split into `spacing.css`, `typography.css`, etc.? More files = more granular adoption, but also more import boilerplate.
+1. **Naming prefix**: `--ds-*` is generic. Should we pick something more distinctive? Or let consumers alias at their document root?
 
-2. **Naming prefix**: `--ds-*` is generic. Should we pick something more distinctive? Or let consumers alias at their document root?
-
-3. **Dark mode strategy**: `light-dark()` is clean but requires `color-scheme` to be set. Document this requirement or handle it in the system?
+2. **Dark mode strategy**: `light-dark()` is clean but requires `color-scheme` to be set. Document this requirement or handle it in the system?
 
 ## References
 
